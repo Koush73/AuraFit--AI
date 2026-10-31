@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AuraFit AI - Personalized Fitness and Physique Transformation Tracker with computer vision analysis, adaptive workout programming, and intelligent nutrition planning.">
+<title>AuraFit AI — Physique Transformation Tracker</title>
+<style>
+/* ===== CSS CUSTOM PROPERTIES ===== */
+:root {
+  /* Light Theme (Default) */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-input: #ffffff;
+  --bg-modal-overlay: rgba(15, 23, 42, 0.45);
+  --text-main: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-inverse: #ffffff;
+  --accent-cyan: #06b6d4;
+  --accent-cyan-light: #22d3ee;
+  --accent-violet: #8b5cf6;
+  --accent-violet-light: #a78bfa;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+  --accent-blue: #3b82f6;
+  --gradient-brand: linear-gradient(135deg, #06b6d4, #8b5cf6);
+  --gradient-brand-subtle: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(139,92,246,0.08));
+  --gradient-warm: linear-gradient(135deg, #f59e0b, #f43f5e);
+  --border-subtle: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --shadow-sm: 0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md: 0 4px 12px rgba(15,23,42,0.08), 0 2px 4px rgba(15,23,42,0.04);
+  --shadow-lg: 0 12px 40px rgba(15,23,42,0.12), 0 4px 12px rgba(15,23,42,0.06);
+  --shadow-xl: 0 24px 60px rgba(15,23,42,0.16);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  --disclaimer-bg: #fffbeb;
+  --disclaimer-border: #fbbf24;
+  --disclaimer-text: #92400e;
+  --tab-bg: #e2e8f0;
+  --tab-active-bg: #ffffff;
+  --tab-text: #475569;
+  --tab-active-text: #0f172a;
+  --progress-bg: #e2e8f0;
+  --table-header-bg: #f1f5f9;
+  --table-row-hover: #f8fafc;
+  --table-border: #e2e8f0;
+  --code-bg: #f1f5f9;
+  --badge-bg: rgba(6,182,212,0.1);
+  --badge-text: #0891b2;
+  --alert-info-bg: rgba(59,130,246,0.08);
+  --alert-info-border: #3b82f6;
+  --alert-warn-bg: rgba(245,158,11,0.08);
+  --alert-warn-border: #f59e0b;
+  --alert-success-bg: rgba(16,185,129,0.08);
+  --alert-success-border: #10b981;
+  --canvas-bg: #f8fafc;
+  --scanner-color: rgba(6,182,212,0.5);
+}
+
+[data-theme="dark"] {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #1e293b;
+  --bg-card-hover: #263348;
+  --bg-input: #1e293b;
+  --bg-modal-overlay: rgba(0, 0, 0, 0.65);
+  --text-main: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverse: #0f172a;
+  --border-subtle: #334155;
+  --border-medium: #475569;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.4);
+  --shadow-xl: 0 24px 60px rgba(0,0,0,0.5);
+  --disclaimer-bg: rgba(245,158,11,0.1);
+  --disclaimer-border: #b45309;
+  --disclaimer-text: #fbbf24;
+  --tab-bg: #1e293b;
+  --tab-active-bg: #334155;
+  --tab-text: #94a3b8;
+  --tab-active-text: #f1f5f9;
+  --progress-bg: #334155;
+  --table-header-bg: #263348;
+  --table-row-hover: #263348;
+  --table-border: #334155;
+  --code-bg: #0f172a;
+  --badge-bg: rgba(6,182,212,0.15);
+  --badge-text: #22d3ee;
+  --alert-info-bg: rgba(59,130,246,0.12);
+  --alert-warn-bg: rgba(245,158,11,0.12);
+  --alert-success-bg: rgba(16,185,129,0.12);
+  --canvas-bg: #1a2332;
+  --scanner-color: rgba(6,182,212,0.4);
+}
+
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-main);
+  line-height: 1.6;
+  transition: background var(--transition-normal), color var(--transition-normal);
+  min-height: 100vh;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--border-medium); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ===== DISCLAIMER BANNER ===== */
+.disclaimer-banner {
+  background: var(--disclaimer-bg);
+  border-bottom: 2px solid var(--disclaimer-border);
+  color: var(--disclaimer-text);
+  padding: 10px 24px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  transition: background var(--transition-normal), color var(--transition-normal), border-color var(--transition-normal);
+}
+.disclaimer-banner strong { font-weight: 700; }
+.disclaimer-icon { margin-right: 6px; }
+
+/* ===== HEADER ===== */
+.app-header {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 46px;
+  z-index: 900;
+  transition: background var(--transition-normal), border-color var(--transition-normal);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-badge {
+  background: var(--gradient-brand);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.1rem;
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  letter-spacing: -0.02em;
+  box-shadow: 0 2px 8px rgba(6,182,212,0.3);
+  white-space: nowrap;
+}
+
+.brand-title {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+.btn:hover { background: var(--bg-card-hover); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+
+.btn-primary {
+  background: var(--gradient-brand);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(6,182,212,0.25);
+}
+.btn-primary:hover { box-shadow: 0 4px 16px rgba(6,182,212,0.35); filter: brightness(1.05); }
+
+.btn-accent {
+  background: var(--accent-emerald);
+  color: #fff;
+  border-color: transparent;
+}
+.btn-accent:hover { filter: brightness(1.1); }
+
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-secondary);
+}
+.btn-ghost:hover { background: var(--bg-secondary); color: var(--text-main); }
+
+.btn-sm { padding: 5px 10px; font-size: 0.78rem; }
+.btn-lg { padding: 12px 28px; font-size: 0.95rem; }
+
+.btn-danger { background: var(--accent-rose); color: #fff; border-color: transparent; }
+.btn-danger:hover { filter: brightness(1.1); }
+
+.btn-outline-cyan {
+  background: transparent;
+  border: 1.5px solid var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+.btn-outline-cyan:hover { background: rgba(6,182,212,0.08); }
+
+/* ===== USER AUTH DISPLAY ===== */
+.auth-section { display: flex; align-items: center; gap: 10px; }
+
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 12px 4px 4px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+}
+
+.user-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--gradient-brand);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.user-info { display: flex; flex-direction: column; }
+.user-name { font-size: 0.82rem; font-weight: 600; color: var(--text-main); line-height: 1.2; }
+.user-status { font-size: 0.7rem; color: var(--accent-emerald); font-weight: 500; }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg-modal-overlay);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2000;
+  opacity: 0; visibility: hidden;
+  transition: all var(--transition-normal);
+  backdrop-filter: blur(6px);
+}
+.modal-overlay.active { opacity: 1; visibility: visible; }
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  width: 90%; max-width: 460px;
+  max-height: 90vh; overflow-y: auto;
+  transform: scale(0.92) translateY(20px);
+  transition: transform var(--transition-normal);
+}
+.modal-overlay.active .modal { transform: scale(1) translateY(0); }
+
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px 0;
+}
+.modal-header h2 { font-size: 1.15rem; font-weight: 700; }
+
+.modal-close {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: var(--bg-secondary);
+  border-radius: 50%; cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  transition: all var(--transition-fast);
+}
+.modal-close:hover { background: var(--accent-rose); color: #fff; }
+
+.modal-body { padding: 20px 24px 24px; }
+
+/* ===== MODAL TABS ===== */
+.modal-tabs {
+  display: flex; gap: 0;
+  margin: 16px 24px 0;
+  background: var(--tab-bg);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+}
+.modal-tab-btn {
+  flex: 1;
+  padding: 8px; border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 0.82rem; font-weight: 600;
+  color: var(--tab-text);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.modal-tab-btn.active {
+  background: var(--tab-active-bg);
+  color: var(--tab-active-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.modal-tab-content { display: none; }
+.modal-tab-content.active { display: block; }
+
+/* ===== FORMS ===== */
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  outline: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 0 3px rgba(6,182,212,0.15);
+}
+.form-select { cursor: pointer; }
+.form-textarea { resize: vertical; min-height: 80px; }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.demo-logins {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border-subtle);
+}
+.demo-logins-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.demo-login-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.demo-login-btn {
+  padding: 6px 12px;
+  border: 1.5px dashed var(--accent-cyan);
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+}
+.demo-login-btn:hover {
+  background: var(--accent-cyan);
+  color: #fff;
+  border-style: solid;
+}
+
+/* ===== MAIN CONTENT ===== */
+.app-main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px 24px 60px;
+}
+
+/* ===== TAB NAVIGATION ===== */
+.tab-nav {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 5px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 10px 8px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--tab-text);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+  white-space: nowrap;
+  position: relative;
+}
+.tab-btn:hover { background: var(--bg-secondary); color: var(--text-main); }
+.tab-btn.active {
+  background: var(--gradient-brand);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(6,182,212,0.3);
+}
+.tab-btn .tab-icon { display: block; font-size: 1.15rem; margin-bottom: 2px; }
+
+.tab-panel { display: none; animation: fadeSlideIn 0.35s ease; }
+.tab-panel.active { display: block; }
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
+  margin-bottom: 20px;
+  transition: all var(--transition-normal);
+}
+.card:hover { box-shadow: var(--shadow-md); }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* ===== BADGE ===== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.badge-cyan { background: var(--badge-bg); color: var(--badge-text); }
+.badge-emerald { background: rgba(16,185,129,0.12); color: #059669; }
+.badge-violet { background: rgba(139,92,246,0.12); color: #7c3aed; }
+.badge-rose { background: rgba(244,63,94,0.12); color: #e11d48; }
+.badge-amber { background: rgba(245,158,11,0.12); color: #d97706; }
+
+/* ===== GRID LAYOUTS ===== */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+@media (max-width: 768px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .app-header { padding: 12px 16px; }
+  .app-main { padding: 16px; }
+  .tab-nav { border-radius: var(--radius-md); }
+  .brand-title { display: none; }
+}
+
+/* ===== METRIC CARD ===== */
+.metric-card {
+  background: var(--gradient-brand-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+}
+.metric-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+.metric-label {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress-group { margin-bottom: 14px; }
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.progress-label { font-size: 0.82rem; font-weight: 600; color: var(--text-main); }
+.progress-value { font-size: 0.78rem; font-weight: 700; color: var(--accent-cyan); }
+.progress-bar {
+  height: 8px;
+  background: var(--progress-bg);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--gradient-brand);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== TABLES ===== */
+.table-container { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--table-border); }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+th {
+  background: var(--table-header-bg);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--table-border);
+  white-space: nowrap;
+}
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--table-border);
+  color: var(--text-main);
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--table-row-hover); }
+
+/* ===== CODE BLOCKS ===== */
+.code-block {
+  background: var(--code-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--accent-cyan);
+  overflow-x: auto;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+/* ===== CANVAS / SVG CONTAINERS ===== */
+.canvas-container {
+  position: relative;
+  background: var(--canvas-bg);
+  border: 2px dashed var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  transition: all var(--transition-normal);
+}
+.canvas-container:hover { border-color: var(--accent-cyan); }
+.canvas-container canvas { display: block; max-width: 100%; }
+
+.canvas-label {
+  position: absolute;
+  top: 10px; left: 10px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ===== SCAN LINE ANIMATION ===== */
+.scan-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 3px;
+  background: var(--scanner-color);
+  box-shadow: 0 0 15px var(--accent-cyan), 0 0 30px var(--accent-cyan);
+  animation: scanMove 2.2s ease-in-out infinite;
+  display: none;
+  z-index: 10;
+}
+.scan-line.active { display: block; }
+@keyframes scanMove {
+  0%, 100% { top: 0; }
+  50% { top: calc(100% - 3px); }
+}
+
+/* ===== ALERT BOX ===== */
+.alert-box {
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  border-left: 4px solid;
+  margin-bottom: 16px;
+  font-size: 0.85rem;
+}
+.alert-info { background: var(--alert-info-bg); border-color: var(--alert-info-border); }
+.alert-warn { background: var(--alert-warn-bg); border-color: var(--alert-warn-border); }
+.alert-success { background: var(--alert-success-bg); border-color: var(--alert-success-border); }
+.alert-title { font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+
+/* ===== IMAGE UPLOAD ZONE ===== */
+.upload-zone {
+  border: 2px dashed var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 30px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.upload-zone:hover { border-color: var(--accent-cyan); background: var(--gradient-brand-subtle); }
+.upload-zone .upload-icon { font-size: 2.4rem; }
+.upload-zone .upload-text { font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; }
+.upload-zone .upload-hint { font-size: 0.72rem; color: var(--text-muted); }
+
+/* ===== MEAL CARD ===== */
+.meal-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all var(--transition-fast);
+}
+.meal-card:hover { box-shadow: var(--shadow-sm); }
+.meal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.meal-name { font-weight: 700; font-size: 0.92rem; display: flex; align-items: center; gap: 6px; }
+.meal-cals { font-size: 0.78rem; font-weight: 700; color: var(--accent-cyan); }
+.meal-items { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.7; }
+.meal-macros {
+  display: flex; gap: 12px; margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+.meal-macro {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+.macro-protein { background: rgba(6,182,212,0.12); color: var(--accent-cyan); }
+.macro-carbs { background: rgba(245,158,11,0.12); color: var(--accent-amber); }
+.macro-fat { background: rgba(244,63,94,0.12); color: var(--accent-rose); }
+
+/* ===== SQL EXPLORER ===== */
+.sql-toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.sql-btn {
+  padding: 7px 14px;
+  border: 1px solid var(--accent-violet);
+  background: rgba(139,92,246,0.08);
+  color: var(--accent-violet);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.sql-btn:hover, .sql-btn.active { background: var(--accent-violet); color: #fff; }
+
+/* ===== RADAR CHART ===== */
+.radar-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* ===== ADAPTIVE SCENARIO BTNS ===== */
+.scenario-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.scenario-btn {
+  padding: 8px 16px;
+  border: 1.5px solid var(--border-subtle);
+  background: var(--bg-card);
+  color: var(--text-main);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.scenario-btn:hover { border-color: var(--accent-cyan); background: rgba(6,182,212,0.06); }
+.scenario-btn.active { background: var(--gradient-brand); color: #fff; border-color: transparent; }
+
+/* ===== FASTAPI SPEC BLOCK ===== */
+.spec-block {
+  background: var(--code-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-top: 16px;
+}
+.spec-block-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent-violet);
+  margin-bottom: 8px;
+}
+.spec-block pre {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+
+/* ===== WORKOUT TABLE ===== */
+.workout-day-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+  padding: 12px 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ===== SVG CHART ===== */
+.svg-chart-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  overflow-x: auto;
+}
+
+/* ===== UTILITY ===== */
+.text-center { text-align: center; }
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mt-20 { margin-top: 20px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+.gap-8 { gap: 8px; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.hidden { display: none !important; }
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .disclaimer-banner, .app-header, .tab-nav, .btn, .modal-overlay { display: none !important; }
+  .tab-panel { display: block !important; page-break-inside: avoid; }
+  body { background: #fff; color: #000; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== MEDICAL DISCLAIMER BANNER ===== -->
+<div class="disclaimer-banner" role="alert">
+  <span class="disclaimer-icon">⚕️</span>
+  <strong>Medical Disclaimer:</strong> This tracker gives fitness tips and automated analytics, but it does not replace advice from doctors, certified trainers, or registered dietitians.
+</div>
+
+<!-- ===== APP HEADER ===== -->
+<header class="app-header" role="banner">
+  <div class="brand">
+    <span class="brand-badge">AuraFit AI</span>
+    <span class="brand-title">Physique Transformation Tracker</span>
+  </div>
+  <div class="header-actions">
+    <button id="themeToggleBtn" class="btn btn-ghost" onclick="toggleTheme()" aria-label="Toggle theme">
+      🌙 Dark Mode
+    </button>
+    <div class="auth-section" id="authSection">
+      <button id="authSignInBtn" class="btn btn-primary btn-sm" onclick="openAuthModal()">Sign In / Register</button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== AUTH MODAL ===== -->
+<div class="modal-overlay" id="authModal" role="dialog" aria-modal="true" aria-label="Authentication">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>🔐 Welcome to AuraFit AI</h2>
+      <button class="modal-close" onclick="closeAuthModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-tabs">
+      <button class="modal-tab-btn active" onclick="switchAuthTab('signin')" id="authTabSignin">Sign In</button>
+      <button class="modal-tab-btn" onclick="switchAuthTab('register')" id="authTabRegister">Register New Account</button>
+    </div>
+    <div class="modal-body">
+      <!-- Sign In Form -->
+      <div class="modal-tab-content active" id="signinContent">
+        <form onsubmit="handleSignIn(event)">
+          <div class="form-group">
+            <label class="form-label" for="signinEmail">Email Address</label>
+            <input class="form-input" id="signinEmail" type="email" placeholder="you@example.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signinPassword">Password</label>
+            <input class="form-input" id="signinPassword" type="password" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg" style="width:100%">Sign In →</button>
+        </form>
+        <div class="demo-logins">
+          <div class="demo-logins-title">⚡ Quick Demo Logins</div>
+          <div class="demo-login-btns">
+            <button class="demo-login-btn" onclick="demoLogin('Alex Kumar','alex@aurafit.io')">Alex Kumar</button>
+            <button class="demo-login-btn" onclick="demoLogin('Priya Sharma','priya@aurafit.io')">Priya Sharma</button>
+          </div>
+        </div>
+      </div>
+      <!-- Register Form -->
+      <div class="modal-tab-content" id="registerContent">
+        <form onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label class="form-label" for="regName">Full Name</label>
+            <input class="form-input" id="regName" type="text" placeholder="Your full name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="regEmail">Email Address</label>
+            <input class="form-input" id="regEmail" type="email" placeholder="you@example.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="regPassword">Password</label>
+            <input class="form-input" id="regPassword" type="password" placeholder="Create a strong password" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg" style="width:100%">Create Account →</button>
+        </form>
+      </div>
+
+      <!-- FastAPI Auth Spec -->
+      <div class="spec-block">
+        <div class="spec-block-title">🐍 FastAPI Auth Reference</div>
+        <pre>from passlib.context import CryptContext
+from jose import JWTError, jwt
+from fastapi.security import OAuth2PasswordBearer
+
+pwd_context = CryptContext(schemes=["bcrypt"])
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+def verify_password(plain, hashed):
+    return pwd_context.verify(plain, hashed)
+
+def create_access_token(data: dict):
+    return jwt.encode(data, SECRET_KEY, algorithm="HS256")</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN APPLICATION ===== -->
+<main class="app-main" role="main">
+
+  <!-- Tab Navigation -->
+  <nav class="tab-nav" role="tablist" aria-label="Application sections">
+    <button class="tab-btn active" role="tab" onclick="switchTab('profile')" id="tabProfile" aria-selected="true">
+      <span class="tab-icon">👤</span>Profile & Bio
+    </button>
+    <button class="tab-btn" role="tab" onclick="switchTab('vision')" id="tabVision">
+      <span class="tab-icon">📸</span>CV Physique Lab
+    </button>
+    <button class="tab-btn" role="tab" onclick="switchTab('workout')" id="tabWorkout">
+      <span class="tab-icon">🏋️</span>AI Workout
+    </button>
+    <button class="tab-btn" role="tab" onclick="switchTab('nutrition')" id="tabNutrition">
+      <span class="tab-icon">🥗</span>AI Nutrition
+    </button>
+    <button class="tab-btn" role="tab" onclick="switchTab('progress')" id="tabProgress">
+      <span class="tab-icon">📈</span>Progress
+    </button>
+    <button class="tab-btn" role="tab" onclick="switchTab('database')" id="tabDatabase">
+      <span class="tab-icon">🗄️</span>SQL Explorer
+    </button>
+  </nav>
+
+  <!-- ============================== -->
+  <!-- TAB 1: Profile & Biometrics    -->
+  <!-- ============================== -->
+  <section class="tab-panel active" id="panelProfile" role="tabpanel">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">👤 Profile & Biometrics Setup</h2>
+          <p class="card-subtitle">Configure your physical parameters and training goals</p>
+        </div>
+        <span class="badge badge-cyan">Module 1</span>
+      </div>
+
+      <form id="profileForm" onsubmit="saveProfile(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="profileAge">Age</label>
+            <input class="form-input" id="profileAge" type="number" min="14" max="80" value="28" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profileSex">Biological Sex</label>
+            <select class="form-select" id="profileSex">
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="profileHeight">Height (cm)</label>
+            <input class="form-input" id="profileHeight" type="number" min="100" max="230" value="178" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profileWeight">Weight (kg)</label>
+            <input class="form-input" id="profileWeight" type="number" min="30" max="250" step="0.1" value="82.5" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="profileExperience">Training Experience</label>
+            <select class="form-select" id="profileExperience">
+              <option value="beginner">Beginner (0–1 yr)</option>
+              <option value="intermediate" selected>Intermediate (1–3 yr)</option>
+              <option value="advanced">Advanced (3+ yr)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profileGoal">Primary Fitness Goal</label>
+            <select class="form-select" id="profileGoal">
+              <option value="recomposition" selected>Recomposition</option>
+              <option value="hypertrophy">Hypertrophy</option>
+              <option value="strength">Strength</option>
+              <option value="fat_loss">Fat Loss</option>
+              <option value="general">General Fitness</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="profileDuration">Session Duration</label>
+            <select class="form-select" id="profileDuration">
+              <option value="30">30 Minutes</option>
+              <option value="45">45 Minutes</option>
+              <option value="60" selected>60 Minutes</option>
+              <option value="90">90 Minutes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profileDays">Weekly Commitment</label>
+            <select class="form-select" id="profileDays">
+              <option value="3">3 Days / Week</option>
+              <option value="4" selected>4 Days / Week</option>
+              <option value="5">5 Days / Week</option>
+              <option value="6">6 Days / Week</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="profileEquipment">Available Equipment</label>
+            <select class="form-select" id="profileEquipment">
+              <option value="full_gym" selected>Full Commercial Gym</option>
+              <option value="home_db">Home Dumbbells + Bench</option>
+              <option value="bands">Resistance Bands</option>
+              <option value="bodyweight">Bodyweight Only</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profileDiet">Dietary Preference</label>
+            <select class="form-select" id="profileDiet">
+              <option value="high_protein" selected>High-Protein Omnivore</option>
+              <option value="vegetarian">Vegetarian</option>
+              <option value="vegan">Vegan</option>
+              <option value="pescatarian">Pescatarian</option>
+              <option value="keto">Keto</option>
+            </select>
+          </div>
+        </div>
+        <div class="mt-20">
+          <button type="submit" class="btn btn-primary btn-lg">💾 Save Profile & Sync All Modules</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===================================== -->
+  <!-- TAB 2: Computer Vision Physique Lab   -->
+  <!-- ===================================== -->
+  <section class="tab-panel" id="panelVision" role="tabpanel">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">📸 Computer Vision & Physique Discrepancy Lab</h2>
+          <p class="card-subtitle">Simulated OpenCV pose-estimation and morphological analysis</p>
+        </div>
+        <span class="badge badge-violet">Module 2</span>
+      </div>
+
+      <div class="grid-2" id="imageUploadGrid">
+        <!-- Current Physique -->
+        <div>
+          <h3 style="font-size:0.88rem; font-weight:700; margin-bottom:10px;">📷 Current Physique</h3>
+          <div class="canvas-container" id="currentPhysiqueContainer">
+            <canvas id="currentCanvas" width="320" height="400"></canvas>
+            <div class="scan-line" id="scanLine1"></div>
+            <div class="canvas-label">Current</div>
+          </div>
+          <button class="btn btn-outline-cyan btn-sm mt-8" onclick="loadDemoSilhouette('current')" style="width:100%">Load Demo Silhouette</button>
+        </div>
+        <!-- Target Physique -->
+        <div>
+          <h3 style="font-size:0.88rem; font-weight:700; margin-bottom:10px;">🎯 Target Physique</h3>
+          <div class="canvas-container" id="targetPhysiqueContainer">
+            <canvas id="targetCanvas" width="320" height="400"></canvas>
+            <div class="scan-line" id="scanLine2"></div>
+            <div class="canvas-label">Target</div>
+          </div>
+          <button class="btn btn-outline-cyan btn-sm mt-8" onclick="loadDemoSilhouette('target')" style="width:100%">Load Demo Silhouette</button>
+        </div>
+      </div>
+
+      <div class="mt-20 text-center">
+        <button class="btn btn-primary btn-lg" onclick="runPhysiqueAnalysis()">🔬 Run AI Physique Analysis</button>
+      </div>
+    </div>
+
+    <!-- Analysis Results (hidden initially) -->
+    <div id="analysisResults" class="hidden">
+      <!-- Discrepancy Metrics -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">📊 Discrepancy Metrics</h2>
+          <span class="badge badge-rose">AI Analysis</span>
+        </div>
+        <div class="grid-3">
+          <div class="metric-card">
+            <div class="metric-value">-7.9%</div>
+            <div class="metric-label">Body Fat Delta</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">+0.23</div>
+            <div class="metric-label">V-Taper Ratio Delta</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">+3.8 kg</div>
+            <div class="metric-label">Lean Mass Deficit</div>
+          </div>
+        </div>
+        <div class="mt-20">
+          <h3 style="font-size:0.92rem; font-weight:700; margin-bottom:14px;">Prioritized Muscle Volume Deficit</h3>
+          <div class="progress-group">
+            <div class="progress-header">
+              <span class="progress-label">Lateral Deltoids</span>
+              <span class="progress-value">+35%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:35%"></div></div>
+          </div>
+          <div class="progress-group">
+            <div class="progress-header">
+              <span class="progress-label">Upper Chest</span>
+              <span class="progress-value">+28%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:28%"></div></div>
+          </div>
+          <div class="progress-group">
+            <div class="progress-header">
+              <span class="progress-label">Lats (Width)</span>
+              <span class="progress-value">+18%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:18%"></div></div>
+          </div>
+          <div class="progress-group">
+            <div class="progress-header">
+              <span class="progress-label">Rear Deltoids</span>
+              <span class="progress-value">+15%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:15%"></div></div>
+          </div>
+          <div class="progress-group">
+            <div class="progress-header">
+              <span class="progress-label">Quadriceps</span>
+              <span class="progress-value">+12%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:12%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SVG Radar Chart -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">🕸️ Morphological Radar Chart</h2>
+          <span class="badge badge-cyan">Current vs Target</span>
+        </div>
+        <div class="radar-container">
+          <svg id="radarChart" width="400" height="400" viewBox="0 0 400 400"></svg>
+        </div>
+        <div class="flex-center gap-8 mt-8" style="gap:20px; flex-wrap:wrap;">
+          <span style="display:flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:600;">
+            <span style="width:14px;height:14px;background:rgba(6,182,212,0.5);border:2px solid #06b6d4;border-radius:3px;display:inline-block;"></span>
+            Current
+          </span>
+          <span style="display:flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:600;">
+            <span style="width:14px;height:14px;background:rgba(139,92,246,0.5);border:2px solid #8b5cf6;border-radius:3px;display:inline-block;"></span>
+            Target
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- TAB 3: AI Workout Routine      -->
+  <!-- ============================== -->
+  <section class="tab-panel" id="panelWorkout" role="tabpanel">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">🏋️ AI-Generated Workout Routine</h2>
+          <p class="card-subtitle">Tailored to your equipment, session limits, and CV-identified muscle deficits</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span class="badge badge-emerald">Module 3</span>
+          <button class="btn btn-sm btn-outline-cyan" onclick="generateWorkout()">🔄 Re-synthesize</button>
+          <button class="btn btn-sm btn-ghost" onclick="window.print()">🖨️ Print</button>
+        </div>
+      </div>
+      <div id="workoutContent"></div>
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- TAB 4: AI Nutrition             -->
+  <!-- ============================== -->
+  <section class="tab-panel" id="panelNutrition" role="tabpanel">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">🥗 AI Nutrition & Meal Planner</h2>
+          <p class="card-subtitle">Caloric calculations reflecting TDEE and macronutrient targets</p>
+        </div>
+        <span class="badge badge-amber">Module 4</span>
+      </div>
+
+      <div class="grid-3 mb-16" id="macroSummary">
+        <div class="metric-card">
+          <div class="metric-value" id="tdeeValue">2,680</div>
+          <div class="metric-label">Daily Calories (TDEE Adjusted)</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="proteinValue">182g</div>
+          <div class="metric-label">Protein Target (2.2g/kg)</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="carbsFatValue">310g / 72g</div>
+          <div class="metric-label">Carbs / Healthy Fats</div>
+        </div>
+      </div>
+
+      <div id="mealPlanContent"></div>
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- TAB 5: Progress Tracking        -->
+  <!-- ============================== -->
+  <section class="tab-panel" id="panelProgress" role="tabpanel">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">📈 Progress Check-In</h2>
+          <p class="card-subtitle">Log updated measurements and track adaptive feedback</p>
+        </div>
+        <span class="badge badge-emerald">Module 5</span>
+      </div>
+
+      <form id="progressForm" onsubmit="logProgress(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="progWeight">Current Weight (kg)</label>
+            <input class="form-input" id="progWeight" type="number" step="0.1" value="81.8" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="progWaist">Waist (cm)</label>
+            <input class="form-input" id="progWaist" type="number" step="0.1" value="83.5" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="progChest">Chest (cm)</label>
+            <input class="form-input" id="progChest" type="number" step="0.1" value="101.2" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="progArm">Arm (cm)</label>
+            <input class="form-input" id="progArm" type="number" step="0.1" value="37.5" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="progAdherence">Weekly Adherence Rating</label>
+          <select class="form-select" id="progAdherence">
+            <option value="excellent">Excellent (90–100%)</option>
+            <option value="good" selected>Good (75–89%)</option>
+            <option value="moderate">Moderate (50–74%)</option>
+            <option value="poor">Poor (&lt;50%)</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-accent btn-lg">📊 Log Check-In & Analyze</button>
+      </form>
+    </div>
+
+    <!-- Progress Chart -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">📉 Weight & Measurements Trajectory</h2>
+      </div>
+      <div class="svg-chart-container">
+        <svg id="progressChart" width="100%" height="280" viewBox="0 0 760 280" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+    </div>
+
+    <!-- Adaptive Feedback -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">🤖 Adaptive Feedback Engine</h2>
+        <span class="badge badge-rose">AI Recommendations</span>
+      </div>
+
+      <div class="scenario-btns">
+        <button class="scenario-btn active" onclick="triggerScenario('plateau')">📉 Plateau Scenario</button>
+        <button class="scenario-btn" onclick="triggerScenario('fatigue')">😴 High Fatigue / Deload</button>
+        <button class="scenario-btn" onclick="triggerScenario('surge')">💪 Hypertrophy Surge</button>
+      </div>
+
+      <div id="adaptiveFeedback"></div>
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- TAB 6: SQL Database Explorer    -->
+  <!-- ============================== -->
+  <section class="tab-panel" id="panelDatabase" role="tabpanel">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">🗄️ Interactive SQL Database Explorer</h2>
+          <p class="card-subtitle">Production relational DDL with live query simulation</p>
+        </div>
+        <span class="badge badge-violet">PostgreSQL / SQLite</span>
+      </div>
+
+      <!-- DDL Schema -->
+      <div class="code-block" style="font-size:0.75rem; max-height:280px; overflow-y:auto; margin-bottom:20px;">
+<span style="color:var(--accent-violet);">-- Production DDL Schema</span>
+CREATE TABLE <span style="color:var(--accent-emerald);">users</span> (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email VARCHAR(255) UNIQUE NOT NULL,
+  hashed_password VARCHAR(255) NOT NULL,
+  full_name VARCHAR(100),
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE <span style="color:var(--accent-emerald);">user_profiles</span> (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  age INT, gender VARCHAR(10),
+  height_cm NUMERIC, weight_kg NUMERIC,
+  training_experience VARCHAR(20),
+  fitness_goal VARCHAR(30),
+  duration_mins INT, days_per_week INT,
+  equipment VARCHAR(30),
+  dietary_preference VARCHAR(30),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE <span style="color:var(--accent-emerald);">physique_scans</span> (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  current_img_url TEXT, target_img_url TEXT,
+  current_bf_pct NUMERIC, target_bf_pct NUMERIC,
+  v_taper_ratio NUMERIC,
+  morphological_delta JSONB,
+  scanned_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE <span style="color:var(--accent-emerald);">progress_logs</span> (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  weight_kg NUMERIC, waist_cm NUMERIC,
+  chest_cm NUMERIC, arm_cm NUMERIC,
+  adherence_rpe VARCHAR(20),
+  adaptive_action_taken TEXT,
+  logged_at TIMESTAMP DEFAULT NOW()
+);</div>
+
+      <!-- Query Buttons -->
+      <div class="sql-toolbar" id="sqlToolbar">
+        <button class="sql-btn active" onclick="runSQL('users')">SELECT * FROM users;</button>
+        <button class="sql-btn" onclick="runSQL('user_profiles')">SELECT * FROM user_profiles;</button>
+        <button class="sql-btn" onclick="runSQL('physique_scans')">SELECT * FROM physique_scans;</button>
+        <button class="sql-btn" onclick="runSQL('progress_logs')">SELECT * FROM progress_logs;</button>
+      </div>
+
+      <!-- Active Query Display -->
+      <div class="code-block" id="activeQueryDisplay" style="margin-bottom:16px;">
+        <span style="color:var(--accent-violet);">SELECT</span> * <span style="color:var(--accent-violet);">FROM</span> <span style="color:var(--accent-emerald);">users</span>;
+      </div>
+
+      <!-- Query Results Table -->
+      <div class="table-container" id="sqlResultContainer"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+/* ============================================================
+   AuraFit AI — Complete Application Logic
+   ============================================================ */
+
+// ===== STATE =====
+const APP_STATE = {
+  currentUser: null,
+  profile: null,
+  progressLogs: [],
+  currentTheme: 'light'
+};
+
+// ===== DATABASE SIMULATION =====
+const DB = {
+  users: [
+    { id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', email: 'alex@aurafit.io', hashed_password: '$2b$12$LJ3...hashed', full_name: 'Alex Kumar', is_active: true, created_at: '2026-09-15 08:30:00' },
+    { id: 'b2c3d4e5-f6a7-8901-bcde-f12345678901', email: 'priya@aurafit.io', hashed_password: '$2b$12$XQ7...hashed', full_name: 'Priya Sharma', is_active: true, created_at: '2026-10-01 14:22:00' }
+  ],
+  user_profiles: [
+    { id: 'c3d4e5f6-a7b8-9012-cdef-123456789012', user_id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', age: 28, gender: 'male', height_cm: 178, weight_kg: 82.5, training_experience: 'intermediate', fitness_goal: 'recomposition', duration_mins: 60, days_per_week: 4, equipment: 'full_gym', dietary_preference: 'high_protein', updated_at: '2026-10-28 10:15:00' },
+    { id: 'd4e5f6a7-b8c9-0123-defa-234567890123', user_id: 'b2c3d4e5-f6a7-8901-bcde-f12345678901', age: 26, gender: 'female', height_cm: 165, weight_kg: 62.0, training_experience: 'beginner', fitness_goal: 'fat_loss', duration_mins: 45, days_per_week: 3, equipment: 'home_db', dietary_preference: 'vegetarian', updated_at: '2026-10-25 16:40:00' }
+  ],
+  physique_scans: [
+    { id: 'e5f6a7b8-c9d0-1234-efab-345678901234', user_id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', current_img_url: '/scans/alex_current.jpg', target_img_url: '/scans/alex_target.jpg', current_bf_pct: 19.2, target_bf_pct: 11.3, v_taper_ratio: 1.42, morphological_delta: '{"shoulders":+0.23,"chest":+0.18}', scanned_at: '2026-10-28 10:20:00' }
+  ],
+  progress_logs: [
+    { id: 'f6a7b8c9-d0e1-2345-fabc-456789012345', user_id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', weight_kg: 82.5, waist_cm: 85.0, chest_cm: 100.5, arm_cm: 37.0, adherence_rpe: 'good', adaptive_action_taken: 'Initial baseline logged', logged_at: '2026-10-14' },
+    { id: 'a7b8c9d0-e1f2-3456-abcd-567890123456', user_id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', weight_kg: 82.1, waist_cm: 84.5, chest_cm: 100.8, arm_cm: 37.2, adherence_rpe: 'excellent', adaptive_action_taken: 'Maintain current protocol', logged_at: '2026-10-21' },
+    { id: 'b8c9d0e1-f2a3-4567-bcde-678901234567', user_id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', weight_kg: 81.8, waist_cm: 83.5, chest_cm: 101.2, arm_cm: 37.5, adherence_rpe: 'good', adaptive_action_taken: 'Slight surplus reduction', logged_at: '2026-10-28' }
+  ]
+};
+
+// ===== THEME MANAGEMENT =====
+function initTheme() {
+  const saved = localStorage.getItem('aurafit_theme');
+  if (saved) {
+    APP_STATE.currentTheme = saved;
+    document.documentElement.setAttribute('data-theme', saved);
+  }
+  updateThemeButton();
+}
+
+function toggleTheme() {
+  APP_STATE.currentTheme = APP_STATE.currentTheme === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', APP_STATE.currentTheme);
+  localStorage.setItem('aurafit_theme', APP_STATE.currentTheme);
+  updateThemeButton();
+}
+
+function updateThemeButton() {
+  const btn = document.getElementById('themeToggleBtn');
+  btn.textContent = APP_STATE.currentTheme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode';
+}
+
+// ===== AUTH MANAGEMENT =====
+function initAuth() {
+  const savedUser = localStorage.getItem('aurafit_user');
+  if (savedUser) {
+    try {
+      APP_STATE.currentUser = JSON.parse(savedUser);
+      renderAuthState();
+    } catch(e) { localStorage.removeItem('aurafit_user'); }
+  }
+}
+
+function openAuthModal() {
+  document.getElementById('authModal').classList.add('active');
+}
+
+function closeAuthModal() {
+  document.getElementById('authModal').classList.remove('active');
+}
+
+function switchAuthTab(tab) {
+  document.querySelectorAll('.modal-tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.remove('active'));
+  if (tab === 'signin') {
+    document.getElementById('authTabSignin').classList.add('active');
+    document.getElementById('signinContent').classList.add('active');
+  } else {
+    document.getElementById('authTabRegister').classList.add('active');
+    document.getElementById('registerContent').classList.add('active');
+  }
+}
+
+function handleSignIn(e) {
+  e.preventDefault();
+  const email = document.getElementById('signinEmail').value;
+  const user = DB.users.find(u => u.email === email);
+  loginUser(user || { id: crypto.randomUUID ? crypto.randomUUID() : 'user-' + Date.now(), email, full_name: email.split('@')[0], is_active: true, created_at: new Date().toISOString() });
+}
+
+function handleRegister(e) {
+  e.preventDefault();
+  const name = document.getElementById('regName').value;
+  const email = document.getElementById('regEmail').value;
+  const newUser = { id: crypto.randomUUID ? crypto.randomUUID() : 'user-' + Date.now(), email, hashed_password: '$2b$12$mock...hashed', full_name: name, is_active: true, created_at: new Date().toISOString() };
+  DB.users.push(newUser);
+  loginUser(newUser);
+}
+
+function demoLogin(name, email) {
+  const user = DB.users.find(u => u.email === email);
+  if (user) loginUser(user);
+}
+
+function loginUser(user) {
+  APP_STATE.currentUser = user;
+  const token = btoa(JSON.stringify({ sub: user.email, exp: Date.now() + 86400000 }));
+  localStorage.setItem('aurafit_token', token);
+  localStorage.setItem('aurafit_user', JSON.stringify(user));
+  closeAuthModal();
+  renderAuthState();
+}
+
+function signOut() {
+  APP_STATE.currentUser = null;
+  localStorage.removeItem('aurafit_token');
+  localStorage.removeItem('aurafit_user');
+  renderAuthState();
+}
+
+function renderAuthState() {
+  const section = document.getElementById('authSection');
+  if (APP_STATE.currentUser) {
+    const u = APP_STATE.currentUser;
+    const initials = u.full_name.split(' ').map(w => w[0]).join('').substring(0, 2);
+    section.innerHTML = `
+      <div class="user-badge">
+        <div class="user-avatar">${initials}</div>
+        <div class="user-info">
+          <span class="user-name">${u.full_name}</span>
+          <span class="user-status">● Active</span>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-ghost" onclick="signOut()">Sign Out</button>
+    `;
+  } else {
+    section.innerHTML = `<button id="authSignInBtn" class="btn btn-primary btn-sm" onclick="openAuthModal()">Sign In / Register</button>`;
+  }
+}
+
+// ===== TAB NAVIGATION =====
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const tabMap = { profile: 'tabProfile', vision: 'tabVision', workout: 'tabWorkout', nutrition: 'tabNutrition', progress: 'tabProgress', database: 'tabDatabase' };
+  const panelMap = { profile: 'panelProfile', vision: 'panelVision', workout: 'panelWorkout', nutrition: 'panelNutrition', progress: 'panelProgress', database: 'panelDatabase' };
+  document.getElementById(tabMap[tabId]).classList.add('active');
+  document.getElementById(tabMap[tabId]).setAttribute('aria-selected', 'true');
+  document.getElementById(panelMap[tabId]).classList.add('active');
+
+  // Trigger renders for specific tabs
+  if (tabId === 'workout') generateWorkout();
+  if (tabId === 'nutrition') generateMealPlan();
+  if (tabId === 'progress') { renderProgressChart(); triggerScenario('plateau'); }
+  if (tabId === 'database') runSQL('users');
+}
+
+// ===== PROFILE SAVE =====
+function saveProfile(e) {
+  e.preventDefault();
+  const profile = {
+    age: +document.getElementById('profileAge').value,
+    sex: document.getElementById('profileSex').value,
+    height: +document.getElementById('profileHeight').value,
+    weight: +document.getElementById('profileWeight').value,
+    experience: document.getElementById('profileExperience').value,
+    goal: document.getElementById('profileGoal').value,
+    duration: +document.getElementById('profileDuration').value,
+    days: +document.getElementById('profileDays').value,
+    equipment: document.getElementById('profileEquipment').value,
+    diet: document.getElementById('profileDiet').value
+  };
+  APP_STATE.profile = profile;
+
+  // Update DB
+  const userId = APP_STATE.currentUser ? APP_STATE.currentUser.id : DB.users[0].id;
+  const existing = DB.user_profiles.find(p => p.user_id === userId);
+  const dbProfile = {
+    id: existing ? existing.id : (crypto.randomUUID ? crypto.randomUUID() : 'prof-' + Date.now()),
+    user_id: userId,
+    age: profile.age, gender: profile.sex,
+    height_cm: profile.height, weight_kg: profile.weight,
+    training_experience: profile.experience,
+    fitness_goal: profile.goal,
+    duration_mins: profile.duration, days_per_week: profile.days,
+    equipment: profile.equipment, dietary_preference: profile.diet,
+    updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19)
+  };
+  if (existing) Object.assign(existing, dbProfile);
+  else DB.user_profiles.push(dbProfile);
+
+  // Update nutrition values
+  updateNutritionCalcs(profile);
+
+  // Visual confirmation
+  const btn = e.target.querySelector('button[type="submit"]');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '✅ Saved & Synced!';
+  btn.style.background = 'var(--accent-emerald)';
+  setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; }, 2000);
+}
+
+function updateNutritionCalcs(p) {
+  if (!p) return;
+  // Mifflin-St Jeor TDEE estimation
+  let bmr;
+  if (p.sex === 'male') bmr = 10 * p.weight + 6.25 * p.height - 5 * p.age + 5;
+  else bmr = 10 * p.weight + 6.25 * p.height - 5 * p.age - 161;
+  const activityMultiplier = p.days <= 3 ? 1.55 : p.days <= 4 ? 1.65 : p.days <= 5 ? 1.75 : 1.85;
+  let tdee = Math.round(bmr * activityMultiplier);
+  if (p.goal === 'fat_loss') tdee -= 350;
+  else if (p.goal === 'hypertrophy') tdee += 300;
+  else if (p.goal === 'recomposition') tdee -= 100;
+
+  const protein = Math.round(p.weight * 2.2);
+  const proteinCals = protein * 4;
+  const fatCals = Math.round(tdee * 0.25);
+  const fat = Math.round(fatCals / 9);
+  const carbCals = tdee - proteinCals - fatCals;
+  const carbs = Math.round(carbCals / 4);
+
+  document.getElementById('tdeeValue').textContent = tdee.toLocaleString();
+  document.getElementById('proteinValue').textContent = protein + 'g';
+  document.getElementById('carbsFatValue').textContent = carbs + 'g / ' + fat + 'g';
+}
+
+// ===== CANVAS: SILHOUETTE & KEYPOINTS =====
+function loadDemoSilhouette(type) {
+  const canvasId = type === 'current' ? 'currentCanvas' : 'targetCanvas';
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  // Draw background grid
+  ctx.strokeStyle = APP_STATE.currentTheme === 'dark' ? 'rgba(148,163,184,0.08)' : 'rgba(15,23,42,0.04)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < w; x += 20) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+  for (let y = 0; y < h; y += 20) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+  // Body silhouette proportions
+  const cx = w / 2;
+  const isCurrent = type === 'current';
+  const shoulderW = isCurrent ? 62 : 72;
+  const chestW = isCurrent ? 50 : 58;
+  const waistW = isCurrent ? 42 : 35;
+  const hipW = isCurrent ? 44 : 42;
+
+  // Draw silhouette
+  ctx.beginPath();
+  ctx.fillStyle = isCurrent ? 'rgba(6,182,212,0.15)' : 'rgba(139,92,246,0.15)';
+  ctx.strokeStyle = isCurrent ? '#06b6d4' : '#8b5cf6';
+  ctx.lineWidth = 2;
+  // Head
+  ctx.arc(cx, 55, 22, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+  // Neck
+  ctx.beginPath();
+  ctx.fillStyle = isCurrent ? 'rgba(6,182,212,0.15)' : 'rgba(139,92,246,0.15)';
+  ctx.moveTo(cx - 10, 75);
+  ctx.lineTo(cx + 10, 75);
+  ctx.lineTo(cx + 10, 95);
+  ctx.lineTo(cx - 10, 95);
+  ctx.fill(); ctx.stroke();
+  // Torso
+  ctx.beginPath();
+  ctx.moveTo(cx - shoulderW, 95);
+  ctx.quadraticCurveTo(cx - chestW, 150, cx - waistW, 210);
+  ctx.lineTo(cx - hipW, 250);
+  ctx.lineTo(cx + hipW, 250);
+  ctx.lineTo(cx + waistW, 210);
+  ctx.quadraticCurveTo(cx + chestW, 150, cx + shoulderW, 95);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  // Arms
+  const armThick = isCurrent ? 12 : 15;
+  [-1, 1].forEach(side => {
+    ctx.beginPath();
+    ctx.moveTo(cx + side * shoulderW, 100);
+    ctx.quadraticCurveTo(cx + side * (shoulderW + 30), 160, cx + side * (shoulderW + 15), 230);
+    ctx.lineTo(cx + side * (shoulderW + 15 - armThick), 228);
+    ctx.quadraticCurveTo(cx + side * (shoulderW + 30 - armThick), 158, cx + side * shoulderW, 108);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+  });
+  // Legs
+  const legW = isCurrent ? 20 : 24;
+  [-1, 1].forEach(side => {
+    ctx.beginPath();
+    ctx.moveTo(cx + side * 15, 250);
+    ctx.lineTo(cx + side * (15 + legW), 250);
+    ctx.lineTo(cx + side * (18 + legW), 380);
+    ctx.lineTo(cx + side * 12, 380);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+  });
+
+  // Draw 18 keypoints
+  const keypoints = [
+    [cx, 33], [cx, 55], [cx, 77],                     // top head, head center, chin
+    [cx - 10, 88], [cx + 10, 88],                       // neck L/R
+    [cx - shoulderW, 97], [cx + shoulderW, 97],         // shoulders
+    [cx - shoulderW - 20, 165], [cx + shoulderW + 20, 165], // elbows
+    [cx - shoulderW - 12, 228], [cx + shoulderW + 12, 228], // wrists
+    [cx, 150],                                          // sternum
+    [cx, 210],                                          // navel
+    [cx - hipW, 250], [cx + hipW, 250],                 // hips
+    [cx - 20, 315], [cx + 20, 315],                     // knees
+    [cx - 18, 378], [cx + 18, 378]                      // ankles — total 19, cut to 18
+  ].slice(0, 18);
+
+  keypoints.forEach(([kx, ky], i) => {
+    ctx.beginPath();
+    ctx.arc(kx, ky, 4, 0, Math.PI * 2);
+    ctx.fillStyle = isCurrent ? '#06b6d4' : '#8b5cf6';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  });
+
+  // Bounding box
+  const bx = cx - shoulderW - 35, by = 20;
+  const bw = (shoulderW + 35) * 2, bh = 370;
+  ctx.setLineDash([6, 4]);
+  ctx.strokeStyle = isCurrent ? 'rgba(6,182,212,0.5)' : 'rgba(139,92,246,0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(bx, by, bw, bh);
+  ctx.setLineDash([]);
+
+  // Label
+  ctx.font = '600 10px system-ui, sans-serif';
+  ctx.fillStyle = isCurrent ? '#06b6d4' : '#8b5cf6';
+  ctx.fillText(isCurrent ? 'POSE_EST_v2 · 18 KP' : 'TARGET_REF · 18 KP', bx + 4, by - 5);
+}
+
+// ===== PHYSIQUE ANALYSIS =====
+function runPhysiqueAnalysis() {
+  // Load silhouettes if not loaded
+  loadDemoSilhouette('current');
+  loadDemoSilhouette('target');
+
+  // Activate scan lines
+  const sl1 = document.getElementById('scanLine1');
+  const sl2 = document.getElementById('scanLine2');
+  sl1.classList.add('active');
+  sl2.classList.add('active');
+
+  setTimeout(() => {
+    sl1.classList.remove('active');
+    sl2.classList.remove('active');
+    document.getElementById('analysisResults').classList.remove('hidden');
+    drawRadarChart();
+
+    // Store scan in DB
+    const userId = APP_STATE.currentUser ? APP_STATE.currentUser.id : DB.users[0].id;
+    if (!DB.physique_scans.find(s => s.user_id === userId)) {
+      DB.physique_scans.push({
+        id: crypto.randomUUID ? crypto.randomUUID() : 'scan-' + Date.now(),
+        user_id: userId,
+        current_img_url: '/scans/demo_current.svg',
+        target_img_url: '/scans/demo_target.svg',
+        current_bf_pct: 19.2, target_bf_pct: 11.3,
+        v_taper_ratio: 1.42,
+        morphological_delta: '{"bf_delta":-7.9,"vtaper_delta":+0.23}',
+        scanned_at: new Date().toISOString().replace('T', ' ').substring(0, 19)
+      });
+    }
+  }, 2500);
+}
+
+// ===== SVG RADAR CHART =====
+function drawRadarChart() {
+  const svg = document.getElementById('radarChart');
+  const cx = 200, cy = 200, maxR = 150;
+  const labels = ['Shoulders', 'Chest', 'Arms', 'Legs', 'Back'];
+  const current = [0.65, 0.60, 0.58, 0.70, 0.55];
+  const target = [0.90, 0.85, 0.80, 0.82, 0.88];
+  const n = labels.length;
+  const angleStep = (2 * Math.PI) / n;
+
+  let html = '';
+
+  // Grid rings
+  [0.25, 0.5, 0.75, 1.0].forEach(frac => {
+    const r = maxR * frac;
+    let points = '';
+    for (let i = 0; i < n; i++) {
+      const angle = -Math.PI / 2 + i * angleStep;
+      points += `${cx + r * Math.cos(angle)},${cy + r * Math.sin(angle)} `;
+    }
+    html += `<polygon points="${points}" fill="none" stroke="var(--border-subtle)" stroke-width="1" opacity="0.5"/>`;
+  });
+
+  // Axis lines + labels
+  for (let i = 0; i < n; i++) {
+    const angle = -Math.PI / 2 + i * angleStep;
+    const ex = cx + maxR * Math.cos(angle);
+    const ey = cy + maxR * Math.sin(angle);
+    html += `<line x1="${cx}" y1="${cy}" x2="${ex}" y2="${ey}" stroke="var(--border-subtle)" stroke-width="1" opacity="0.3"/>`;
+    const lx = cx + (maxR + 20) * Math.cos(angle);
+    const ly = cy + (maxR + 20) * Math.sin(angle);
+    html += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" fill="var(--text-secondary)" font-size="12" font-weight="600" font-family="var(--font-sans)">${labels[i]}</text>`;
+  }
+
+  // Current polygon
+  let currentPoints = '';
+  for (let i = 0; i < n; i++) {
+    const angle = -Math.PI / 2 + i * angleStep;
+    currentPoints += `${cx + maxR * current[i] * Math.cos(angle)},${cy + maxR * current[i] * Math.sin(angle)} `;
+  }
+  html += `<polygon points="${currentPoints}" fill="rgba(6,182,212,0.2)" stroke="#06b6d4" stroke-width="2.5"/>`;
+
+  // Target polygon
+  let targetPoints = '';
+  for (let i = 0; i < n; i++) {
+    const angle = -Math.PI / 2 + i * angleStep;
+    targetPoints += `${cx + maxR * target[i] * Math.cos(angle)},${cy + maxR * target[i] * Math.sin(angle)} `;
+  }
+  html += `<polygon points="${targetPoints}" fill="rgba(139,92,246,0.15)" stroke="#8b5cf6" stroke-width="2.5" stroke-dasharray="6 3"/>`;
+
+  // Data points
+  for (let i = 0; i < n; i++) {
+    const angle = -Math.PI / 2 + i * angleStep;
+    const cx1 = cx + maxR * current[i] * Math.cos(angle);
+    const cy1 = cy + maxR * current[i] * Math.sin(angle);
+    html += `<circle cx="${cx1}" cy="${cy1}" r="5" fill="#06b6d4" stroke="#fff" stroke-width="2"/>`;
+    const cx2 = cx + maxR * target[i] * Math.cos(angle);
+    const cy2 = cy + maxR * target[i] * Math.sin(angle);
+    html += `<circle cx="${cx2}" cy="${cy2}" r="5" fill="#8b5cf6" stroke="#fff" stroke-width="2"/>`;
+  }
+
+  svg.innerHTML = html;
+}
+
+// ===== WORKOUT GENERATION =====
+function generateWorkout() {
+  const p = APP_STATE.profile || { days: 4, equipment: 'full_gym', duration: 60, goal: 'recomposition' };
+  const container = document.getElementById('workoutContent');
+
+  const workouts = {
+    full_gym: [
+      { day: 'Day 1 — Upper Body (Push Focus)', exercises: [
+        { name: 'Incline Barbell Press', muscle: 'Upper Chest', sets: '4 × 8', tempo: '3-0-1-0 / 90s', cue: 'CV cue: Maintain 45° shoulder angle; scapulae retracted' },
+        { name: 'Seated Dumbbell OHP', muscle: 'Anterior Delts', sets: '3 × 10', tempo: '2-1-1-0 / 75s', cue: 'CV cue: Elbows track at 30° forward of midline' },
+        { name: 'Cable Lateral Raise', muscle: 'Lateral Delts', sets: '4 × 15', tempo: '2-1-2-0 / 60s', cue: 'CV cue: Arm elevation to 80°; no trap shrug detected' },
+        { name: 'Triceps Rope Pushdown', muscle: 'Triceps', sets: '3 × 12', tempo: '2-0-1-1 / 60s', cue: 'CV cue: Elbow fixed at ribcage; full extension' },
+        { name: 'Pec Deck Flye', muscle: 'Chest (stretch)', sets: '3 × 12', tempo: '2-2-1-0 / 60s', cue: 'CV cue: Peak contraction hold 2s; ROM ≥ 140°' }
+      ]},
+      { day: 'Day 2 — Lower Body (Quad Focus)', exercises: [
+        { name: 'Barbell Back Squat', muscle: 'Quadriceps', sets: '4 × 6', tempo: '3-1-1-0 / 120s', cue: 'CV cue: Hip crease below knee; knee track over toes' },
+        { name: 'Leg Press (High & Wide)', muscle: 'Glutes / Quads', sets: '3 × 10', tempo: '3-0-1-0 / 90s', cue: 'CV cue: Full ROM; no lumbar flexion at bottom' },
+        { name: 'Walking Lunges', muscle: 'Quads / Glutes', sets: '3 × 12/leg', tempo: '2-0-1-0 / 60s', cue: 'CV cue: Front knee ≤ 5° valgus; upright torso' },
+        { name: 'Leg Extension', muscle: 'Quadriceps', sets: '3 × 15', tempo: '2-1-1-0 / 60s', cue: 'CV cue: Peak contraction 1s; controlled eccentric' },
+        { name: 'Standing Calf Raise', muscle: 'Calves', sets: '4 × 15', tempo: '1-2-1-0 / 45s', cue: 'CV cue: Full dorsiflexion stretch each rep' }
+      ]},
+      { day: 'Day 3 — Upper Body (Pull Focus)', exercises: [
+        { name: 'Weighted Pull-Ups', muscle: 'Lats', sets: '4 × 8', tempo: '2-1-1-0 / 90s', cue: 'CV cue: Full dead hang start; chin clears bar' },
+        { name: 'Chest-Supported Row', muscle: 'Mid Back', sets: '4 × 10', tempo: '2-1-1-1 / 75s', cue: 'CV cue: Scapulae full retraction; no momentum' },
+        { name: 'Face Pulls', muscle: 'Rear Delts', sets: '4 × 15', tempo: '1-2-1-0 / 60s', cue: 'CV cue: External rotation at peak; elbows above shoulders' },
+        { name: 'Barbell Curl', muscle: 'Biceps', sets: '3 × 10', tempo: '2-1-1-0 / 60s', cue: 'CV cue: No elbow drift; supinated grip throughout' },
+        { name: 'Hammer Curl', muscle: 'Brachialis', sets: '3 × 12', tempo: '2-0-1-0 / 60s', cue: 'CV cue: Neutral wrist; controlled negative' }
+      ]},
+      { day: 'Day 4 — Lower Body (Posterior Chain)', exercises: [
+        { name: 'Romanian Deadlift', muscle: 'Hamstrings', sets: '4 × 8', tempo: '3-1-1-0 / 90s', cue: 'CV cue: Hip hinge > 80°; bar path vertical' },
+        { name: 'Bulgarian Split Squat', muscle: 'Glutes / Quads', sets: '3 × 10/leg', tempo: '2-1-1-0 / 75s', cue: 'CV cue: Rear knee 2" from floor; torso upright' },
+        { name: 'Leg Curl (Lying)', muscle: 'Hamstrings', sets: '3 × 12', tempo: '2-1-1-0 / 60s', cue: 'CV cue: Hips pinned; no lumbar extension' },
+        { name: 'Hip Thrust', muscle: 'Glutes', sets: '3 × 12', tempo: '2-2-1-0 / 75s', cue: 'CV cue: Full hip extension; posterior pelvic tilt at top' },
+        { name: 'Seated Calf Raise', muscle: 'Soleus', sets: '4 × 15', tempo: '1-2-1-0 / 45s', cue: 'CV cue: Slow eccentric; pause at stretch' }
+      ]}
+    ],
+    home_db: [
+      { day: 'Day 1 — Full Body Push', exercises: [
+        { name: 'DB Floor Press', muscle: 'Chest', sets: '4 × 10', tempo: '2-1-1-0 / 75s', cue: 'CV cue: Elbows at 45°; full lockout' },
+        { name: 'DB Arnold Press', muscle: 'Shoulders', sets: '3 × 10', tempo: '2-0-1-0 / 75s', cue: 'CV cue: Full rotation arc; controlled tempo' },
+        { name: 'DB Lateral Raise', muscle: 'Lateral Delts', sets: '4 × 15', tempo: '2-1-2-0 / 60s', cue: 'CV cue: Lead with pinkies; no swinging' },
+        { name: 'DB Goblet Squat', muscle: 'Quads', sets: '4 × 12', tempo: '3-0-1-0 / 75s', cue: 'CV cue: Elbows inside knees at bottom' },
+        { name: 'DB Skull Crushers', muscle: 'Triceps', sets: '3 × 12', tempo: '2-0-1-0 / 60s', cue: 'CV cue: Elbows stationary; full stretch' }
+      ]},
+      { day: 'Day 2 — Full Body Pull', exercises: [
+        { name: 'DB Bent-Over Row', muscle: 'Back', sets: '4 × 10', tempo: '2-1-1-0 / 75s', cue: 'CV cue: Torso at 45°; full scapular retraction' },
+        { name: 'DB Romanian Deadlift', muscle: 'Hamstrings', sets: '4 × 10', tempo: '3-1-1-0 / 90s', cue: 'CV cue: Hip hinge pattern; soft knees' },
+        { name: 'DB Rear Delt Flye', muscle: 'Rear Delts', sets: '3 × 15', tempo: '2-1-1-0 / 60s', cue: 'CV cue: Chest on bench; squeeze at peak' },
+        { name: 'DB Curl', muscle: 'Biceps', sets: '3 × 12', tempo: '2-1-1-0 / 60s', cue: 'CV cue: Supinate at top; slow negative' },
+        { name: 'DB Step-Up', muscle: 'Glutes / Quads', sets: '3 × 10/leg', tempo: '2-0-1-0 / 60s', cue: 'CV cue: Drive through heel; no push-off' }
+      ]},
+      { day: 'Day 3 — Full Body Hypertrophy', exercises: [
+        { name: 'DB Incline Press', muscle: 'Upper Chest', sets: '4 × 10', tempo: '2-1-1-0 / 75s', cue: 'CV cue: Bench at 30°; full stretch at bottom' },
+        { name: 'DB Sumo Squat', muscle: 'Adductors / Quads', sets: '3 × 12', tempo: '3-1-1-0 / 75s', cue: 'CV cue: Toes out 45°; knees track toes' },
+        { name: 'Single-Arm DB Row', muscle: 'Lats', sets: '3 × 10/side', tempo: '2-1-1-0 / 60s', cue: 'CV cue: Full stretch to contraction; no rotation' },
+        { name: 'DB Shoulder Press', muscle: 'Delts', sets: '3 × 10', tempo: '2-0-1-0 / 75s', cue: 'CV cue: Neutral path; no excessive arch' },
+        { name: 'DB Lunge', muscle: 'Quads / Glutes', sets: '3 × 10/leg', tempo: '2-0-1-0 / 60s', cue: 'CV cue: Step length consistent; upright torso' }
+      ]}
+    ],
+    bands: [
+      { day: 'Day 1 — Band Upper Body', exercises: [
+        { name: 'Band Push-Up', muscle: 'Chest', sets: '4 × 15', tempo: '2-0-1-0 / 60s', cue: 'CV cue: Band across upper back; full lockout' },
+        { name: 'Band Pull-Apart', muscle: 'Rear Delts', sets: '4 × 20', tempo: '1-2-1-0 / 45s', cue: 'CV cue: Arms straight; squeeze at peak' },
+        { name: 'Band Lateral Raise', muscle: 'Lateral Delts', sets: '3 × 15', tempo: '2-1-1-0 / 60s', cue: 'CV cue: Stand on band center; controlled arc' },
+        { name: 'Band Bicep Curl', muscle: 'Biceps', sets: '3 × 15', tempo: '2-1-1-0 / 45s', cue: 'CV cue: Elbows pinned; full ROM' },
+        { name: 'Band Tricep Extension', muscle: 'Triceps', sets: '3 × 15', tempo: '2-0-1-0 / 45s', cue: 'CV cue: Overhead anchor; full extension' }
+      ]},
+      { day: 'Day 2 — Band Lower Body', exercises: [
+        { name: 'Band Squat', muscle: 'Quads', sets: '4 × 15', tempo: '3-0-1-0 / 60s', cue: 'CV cue: Band under feet; parallel depth' },
+        { name: 'Band Good Morning', muscle: 'Hamstrings', sets: '3 × 12', tempo: '3-1-1-0 / 60s', cue: 'CV cue: Hip hinge focus; band at neck' },
+        { name: 'Band Lateral Walk', muscle: 'Glute Med', sets: '3 × 15/side', tempo: 'Continuous / 45s', cue: 'CV cue: Quarter squat maintained; no valgus' },
+        { name: 'Band Leg Curl', muscle: 'Hamstrings', sets: '3 × 15', tempo: '2-1-1-0 / 45s', cue: 'CV cue: Prone position; band at ankle' },
+        { name: 'Band Calf Raise', muscle: 'Calves', sets: '3 × 20', tempo: '1-2-1-0 / 45s', cue: 'CV cue: Full ROM; peak squeeze' }
+      ]}
+    ],
+    bodyweight: [
+      { day: 'Day 1 — BW Upper Push', exercises: [
+        { name: 'Push-Ups (varied width)', muscle: 'Chest', sets: '4 × 15', tempo: '2-1-1-0 / 60s', cue: 'CV cue: Full ROM; body straight line' },
+        { name: 'Pike Push-Ups', muscle: 'Shoulders', sets: '3 × 10', tempo: '2-1-1-0 / 75s', cue: 'CV cue: Hips high; head toward floor' },
+        { name: 'Diamond Push-Ups', muscle: 'Triceps', sets: '3 × 12', tempo: '2-0-1-0 / 60s', cue: 'CV cue: Hands together; elbows tight' },
+        { name: 'Decline Push-Ups', muscle: 'Upper Chest', sets: '3 × 12', tempo: '2-0-1-0 / 60s', cue: 'CV cue: Feet elevated 12-18"' },
+        { name: 'Plank', muscle: 'Core', sets: '3 × 45s', tempo: 'Isometric / 45s', cue: 'CV cue: Neutral spine; no hip sag' }
+      ]},
+      { day: 'Day 2 — BW Lower', exercises: [
+        { name: 'Bodyweight Squat', muscle: 'Quads', sets: '4 × 20', tempo: '2-1-1-0 / 60s', cue: 'CV cue: Below parallel; weight on heels' },
+        { name: 'Reverse Lunges', muscle: 'Glutes', sets: '3 × 12/leg', tempo: '2-0-1-0 / 60s', cue: 'CV cue: Step back; front knee stable' },
+        { name: 'Glute Bridge', muscle: 'Glutes', sets: '4 × 15', tempo: '2-2-1-0 / 45s', cue: 'CV cue: Full hip extension; squeeze at top' },
+        { name: 'Wall Sit', muscle: 'Quads', sets: '3 × 45s', tempo: 'Isometric / 60s', cue: 'CV cue: 90° knee angle; back flat on wall' },
+        { name: 'Calf Raises', muscle: 'Calves', sets: '3 × 25', tempo: '1-2-1-0 / 45s', cue: 'CV cue: Single-leg for progression; full stretch' }
+      ]},
+      { day: 'Day 3 — BW Upper Pull & Core', exercises: [
+        { name: 'Inverted Rows (table)', muscle: 'Back', sets: '4 × 10', tempo: '2-1-1-0 / 75s', cue: 'CV cue: Body straight; chest to edge' },
+        { name: 'Superman Holds', muscle: 'Lower Back', sets: '3 × 12', tempo: '1-3-1-0 / 60s', cue: 'CV cue: Arms and legs elevated; squeeze' },
+        { name: 'Towel Curl (isometric)', muscle: 'Biceps', sets: '3 × 10', tempo: '5s hold / 60s', cue: 'CV cue: Max tension each rep' },
+        { name: 'Mountain Climbers', muscle: 'Core / Cardio', sets: '3 × 30s', tempo: 'Fast / 45s', cue: 'CV cue: Hips level; alternating drive' },
+        { name: 'Dead Bug', muscle: 'Core', sets: '3 × 10/side', tempo: '3-0-3-0 / 60s', cue: 'CV cue: Lower back pressed to floor' }
+      ]}
+    ]
+  };
+
+  const equipment = p.equipment || 'full_gym';
+  const plan = workouts[equipment] || workouts.full_gym;
+  const daysToShow = plan.slice(0, p.days || 4);
+
+  let html = '';
+  daysToShow.forEach(day => {
+    html += `<div class="workout-day-title">📅 ${day.day}</div>`;
+    html += `<div class="table-container mb-16"><table>
+      <thead><tr><th>Exercise</th><th>Target Muscle</th><th>Sets × Reps</th><th>Tempo / Rest</th><th>OpenCV Coaching Cue</th></tr></thead><tbody>`;
+    day.exercises.forEach(ex => {
+      html += `<tr><td style="font-weight:600">${ex.name}</td><td><span class="badge badge-cyan">${ex.muscle}</span></td><td>${ex.sets}</td><td style="font-family:var(--font-mono);font-size:0.78rem">${ex.tempo}</td><td style="font-size:0.78rem;color:var(--text-secondary)">${ex.cue}</td></tr>`;
+    });
+    html += `</tbody></table></div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+// ===== NUTRITION MEAL PLAN =====
+function generateMealPlan() {
+  const p = APP_STATE.profile || { diet: 'high_protein', weight: 82.5 };
+  const container = document.getElementById('mealPlanContent');
+
+  const mealPlans = {
+    high_protein: [
+      { name: '🌅 Breakfast', cals: 580, items: 'Scrambled eggs (4 whole) with spinach & feta, 2 slices whole grain toast, 1 medium avocado half, black coffee', protein: 42, carbs: 48, fat: 24 },
+      { name: '🥙 Lunch', cals: 680, items: 'Grilled chicken breast (200g) over brown rice (150g cooked), roasted broccoli & bell peppers, tahini drizzle', protein: 52, carbs: 68, fat: 18 },
+      { name: '⚡ Pre-Workout', cals: 340, items: 'Greek yogurt (200g) with banana, honey drizzle, 30g oats, handful of almonds', protein: 24, carbs: 46, fat: 8 },
+      { name: '🍽️ Dinner', cals: 720, items: 'Pan-seared salmon fillet (200g) with sweet potato mash (200g), steamed asparagus, lemon-herb sauce', protein: 48, carbs: 65, fat: 22 },
+      { name: '🥤 Recovery Snack', cals: 360, items: 'Whey protein shake (40g) blended with frozen berries, 1 tbsp peanut butter, oat milk', protein: 36, carbs: 28, fat: 10 }
+    ],
+    vegetarian: [
+      { name: '🌅 Breakfast', cals: 520, items: 'Tofu scramble (200g firm tofu) with turmeric, mushrooms, spinach, whole grain toast with hummus', protein: 34, carbs: 52, fat: 18 },
+      { name: '🥙 Lunch', cals: 640, items: 'Chickpea & quinoa bowl (200g) with roasted vegetables, feta cheese, mixed greens, balsamic glaze', protein: 32, carbs: 78, fat: 20 },
+      { name: '⚡ Pre-Workout', cals: 320, items: 'Cottage cheese (200g) with mixed berries, granola (40g), drizzle of honey', protein: 28, carbs: 40, fat: 6 },
+      { name: '🍽️ Dinner', cals: 680, items: 'Lentil dal (250g) with basmati rice, paneer tikka (100g), cucumber raita, naan bread', protein: 38, carbs: 82, fat: 18 },
+      { name: '🥤 Recovery Snack', cals: 340, items: 'Plant protein shake (35g pea protein), banana, almond butter (1 tbsp), soy milk', protein: 32, carbs: 34, fat: 10 }
+    ],
+    vegan: [
+      { name: '🌅 Breakfast', cals: 510, items: 'Overnight oats (80g) with chia seeds, coconut yogurt, mixed berries, hemp seeds, maple syrup', protein: 22, carbs: 68, fat: 16 },
+      { name: '🥙 Lunch', cals: 620, items: 'Tempeh stir-fry (200g) with brown rice noodles, bok choy, edamame, ginger-tamari sauce', protein: 38, carbs: 70, fat: 16 },
+      { name: '⚡ Pre-Workout', cals: 310, items: 'Banana with almond butter (2 tbsp), handful of trail mix, dates (3)', protein: 12, carbs: 50, fat: 14 },
+      { name: '🍽️ Dinner', cals: 690, items: 'Black bean & sweet potato burrito bowl with guacamole, salsa, cilantro-lime rice, nutritional yeast', protein: 30, carbs: 92, fat: 18 },
+      { name: '🥤 Recovery Snack', cals: 350, items: 'Soy protein shake (35g), frozen mango, spinach, flaxseed, oat milk', protein: 32, carbs: 38, fat: 8 }
+    ],
+    pescatarian: [
+      { name: '🌅 Breakfast', cals: 550, items: 'Smoked salmon (80g) on whole grain bagel with cream cheese, capers, red onion, dill', protein: 34, carbs: 50, fat: 20 },
+      { name: '🥙 Lunch', cals: 650, items: 'Tuna poke bowl with sushi rice (150g), avocado, edamame, cucumber, seaweed, sesame-soy dressing', protein: 44, carbs: 66, fat: 18 },
+      { name: '⚡ Pre-Workout', cals: 320, items: 'Greek yogurt (200g) with granola, honey, sliced almonds, banana', protein: 24, carbs: 44, fat: 8 },
+      { name: '🍽️ Dinner', cals: 700, items: 'Garlic butter shrimp (250g) with linguine (100g dry), roasted cherry tomatoes, arugula, parmesan', protein: 48, carbs: 68, fat: 20 },
+      { name: '🥤 Recovery Snack', cals: 340, items: 'Whey protein (35g) with frozen berries, oat milk, 1 tbsp almond butter', protein: 34, carbs: 30, fat: 10 }
+    ],
+    keto: [
+      { name: '🌅 Breakfast', cals: 580, items: 'Bacon (4 strips) & eggs (3 whole) cooked in butter, avocado half, handful of cherry tomatoes', protein: 38, carbs: 6, fat: 46 },
+      { name: '🥙 Lunch', cals: 640, items: 'Bunless burger patties (200g beef) with cheddar, lettuce wrap, mayo, pickles, side caesar salad', protein: 48, carbs: 8, fat: 48 },
+      { name: '⚡ Pre-Workout', cals: 280, items: 'Handful of macadamia nuts, string cheese (2), celery with almond butter', protein: 14, carbs: 6, fat: 24 },
+      { name: '🍽️ Dinner', cals: 720, items: 'Ribeye steak (250g) with garlic herb butter, roasted cauliflower mash, sautéed green beans in olive oil', protein: 52, carbs: 10, fat: 54 },
+      { name: '🥤 Recovery Snack', cals: 320, items: 'Casein protein (30g) mixed with coconut cream, topped with coconut flakes and dark chocolate chips (10g)', protein: 28, carbs: 8, fat: 20 }
+    ]
+  };
+
+  const diet = p.diet || 'high_protein';
+  const meals = mealPlans[diet] || mealPlans.high_protein;
+
+  let html = '';
+  meals.forEach(meal => {
+    html += `<div class="meal-card">
+      <div class="meal-header">
+        <span class="meal-name">${meal.name}</span>
+        <span class="meal-cals">${meal.cals} kcal</span>
+      </div>
+      <div class="meal-items">${meal.items}</div>
+      <div class="meal-macros">
+        <span class="meal-macro macro-protein">P: ${meal.protein}g</span>
+        <span class="meal-macro macro-carbs">C: ${meal.carbs}g</span>
+        <span class="meal-macro macro-fat">F: ${meal.fat}g</span>
+      </div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+// ===== PROGRESS TRACKING =====
+function logProgress(e) {
+  e.preventDefault();
+  const entry = {
+    id: crypto.randomUUID ? crypto.randomUUID() : 'log-' + Date.now(),
+    user_id: APP_STATE.currentUser ? APP_STATE.currentUser.id : DB.users[0].id,
+    weight_kg: +document.getElementById('progWeight').value,
+    waist_cm: +document.getElementById('progWaist').value,
+    chest_cm: +document.getElementById('progChest').value,
+    arm_cm: +document.getElementById('progArm').value,
+    adherence_rpe: document.getElementById('progAdherence').value,
+    adaptive_action_taken: 'Logged via check-in form',
+    logged_at: new Date().toISOString().split('T')[0]
+  };
+  DB.progress_logs.push(entry);
+  renderProgressChart();
+
+  const btn = e.target.querySelector('button[type="submit"]');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '✅ Check-In Logged!';
+  setTimeout(() => { btn.innerHTML = orig; }, 2000);
+}
+
+function renderProgressChart() {
+  const svg = document.getElementById('progressChart');
+  const logs = DB.progress_logs.filter(l => l.user_id === (APP_STATE.currentUser ? APP_STATE.currentUser.id : DB.users[0].id));
+  if (logs.length === 0) { svg.innerHTML = '<text x="380" y="140" text-anchor="middle" fill="var(--text-muted)" font-size="14">No progress data yet</text>'; return; }
+
+  const padding = { top: 30, right: 30, bottom: 40, left: 50 };
+  const chartW = 760 - padding.left - padding.right;
+  const chartH = 280 - padding.top - padding.bottom;
+
+  const weights = logs.map(l => l.weight_kg);
+  const minW = Math.min(...weights) - 2;
+  const maxW = Math.max(...weights) + 2;
+  const targetW = 78; // target weight line
+
+  let html = '';
+
+  // Background grid
+  const gridLines = 5;
+  for (let i = 0; i <= gridLines; i++) {
+    const y = padding.top + (chartH / gridLines) * i;
+    const val = (maxW - (maxW - minW) * (i / gridLines)).toFixed(1);
+    html += `<line x1="${padding.left}" y1="${y}" x2="${760 - padding.right}" y2="${y}" stroke="var(--border-subtle)" stroke-width="1" opacity="0.4"/>`;
+    html += `<text x="${padding.left - 8}" y="${y + 4}" text-anchor="end" fill="var(--text-muted)" font-size="11" font-family="var(--font-sans)">${val}</text>`;
+  }
+
+  // X-axis labels
+  logs.forEach((log, i) => {
+    const x = padding.left + (chartW / (logs.length - 1 || 1)) * i;
+    const label = log.logged_at.substring(5); // MM-DD
+    html += `<text x="${x}" y="${280 - 10}" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="var(--font-sans)">${label}</text>`;
+  });
+
+  // Target line
+  const targetY = padding.top + chartH * (1 - (targetW - minW) / (maxW - minW));
+  html += `<line x1="${padding.left}" y1="${targetY}" x2="${760 - padding.right}" y2="${targetY}" stroke="var(--accent-emerald)" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.7"/>`;
+  html += `<text x="${760 - padding.right + 4}" y="${targetY + 4}" fill="var(--accent-emerald)" font-size="10" font-weight="600">Target ${targetW}kg</text>`;
+
+  // Weight line
+  let pathD = '';
+  const points = logs.map((log, i) => {
+    const x = padding.left + (chartW / (logs.length - 1 || 1)) * i;
+    const y = padding.top + chartH * (1 - (log.weight_kg - minW) / (maxW - minW));
+    return { x, y };
+  });
+
+  // Gradient area
+  let areaD = `M${points[0].x},${padding.top + chartH}`;
+  points.forEach(p => areaD += ` L${p.x},${p.y}`);
+  areaD += ` L${points[points.length - 1].x},${padding.top + chartH} Z`;
+
+  html += `<defs>
+    <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.02"/>
+    </linearGradient>
+  </defs>`;
+  html += `<path d="${areaD}" fill="url(#weightGrad)"/>`;
+
+  // Line
+  points.forEach((p, i) => {
+    if (i === 0) pathD = `M${p.x},${p.y}`;
+    else pathD += ` L${p.x},${p.y}`;
+  });
+  html += `<path d="${pathD}" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+  // Points
+  points.forEach((p, i) => {
+    html += `<circle cx="${p.x}" cy="${p.y}" r="5" fill="#06b6d4" stroke="var(--bg-card)" stroke-width="2.5"/>`;
+    html += `<text x="${p.x}" y="${p.y - 12}" text-anchor="middle" fill="var(--text-main)" font-size="11" font-weight="700">${logs[i].weight_kg}</text>`;
+  });
+
+  // Labels
+  html += `<text x="${padding.left}" y="18" fill="var(--text-secondary)" font-size="12" font-weight="600" font-family="var(--font-sans)">Weight (kg)</text>`;
+
+  svg.innerHTML = html;
+}
+
+// ===== ADAPTIVE FEEDBACK =====
+function triggerScenario(type) {
+  document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  const container = document.getElementById('adaptiveFeedback');
+  const scenarios = {
+    plateau: {
+      icon: '📉',
+      title: 'Plateau Detected — Adaptive Response Triggered',
+      class: 'alert-warn',
+      items: [
+        { label: 'Caloric Adjustment', action: 'Decrease daily intake by 150 kcal (current TDEE adjusted from 2,680 → 2,530 kcal)' },
+        { label: 'Cardio Addition', action: 'Add 10 minutes LISS cardio (brisk walk or cycling) post-workout on training days' },
+        { label: 'Exercise Variation', action: 'Swap Barbell Bench Press → Incline DB Press; Leg Press → Front Squat for novel stimulus' },
+        { label: 'Reassessment', action: 'Auto-scheduled reassessment in 2 weeks. If plateau persists, initiate refeed protocol.' }
+      ]
+    },
+    fatigue: {
+      icon: '😴',
+      title: 'High Fatigue / Deload Week Protocol',
+      class: 'alert-info',
+      items: [
+        { label: 'Volume Reduction', action: 'Reduce total weekly sets by 40% across all muscle groups (maintain frequency)' },
+        { label: 'Intensity Cap', action: 'Cap all working sets at RPE 6 — no sets to failure this week' },
+        { label: 'Protein Boost', action: 'Increase protein to 2.5g/kg for enhanced recovery and muscle protein synthesis' },
+        { label: 'Sleep & Recovery', action: 'Prioritize 8+ hours sleep. Add 5-minute post-workout stretching protocol.' }
+      ]
+    },
+    surge: {
+      icon: '💪',
+      title: 'Hypertrophy Surge — Progressive Overload Microcycle',
+      class: 'alert-success',
+      items: [
+        { label: 'Load Progression', action: 'Advance all compound lifts to next progressive overload step (+2.5 kg per exercise)' },
+        { label: 'Volume Increase', action: 'Add 1 additional working set to priority muscle groups (Lateral Delts, Upper Chest, Lats)' },
+        { label: 'Tempo Manipulation', action: 'Introduce 4-second eccentric on isolation exercises for enhanced time under tension' },
+        { label: 'Nutrition Sync', action: 'Increase daily surplus by 100 kcal to fuel additional training volume' }
+      ]
+    }
+  };
+
+  const s = scenarios[type];
+  let html = `<div class="alert-box ${s.class}">
+    <div class="alert-title">${s.icon} ${s.title}</div>
+    <div style="margin-top:12px;">`;
+  s.items.forEach(item => {
+    html += `<div style="margin-bottom:10px;">
+      <strong style="color:var(--text-main);font-size:0.85rem;">${item.label}:</strong>
+      <span style="font-size:0.82rem;color:var(--text-secondary);margin-left:4px;">${item.action}</span>
+    </div>`;
+  });
+  html += '</div></div>';
+  container.innerHTML = html;
+}
+
+// ===== SQL EXPLORER =====
+function runSQL(table) {
+  // Update toolbar active state
+  document.querySelectorAll('.sql-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  // Update query display
+  const queryDisplay = document.getElementById('activeQueryDisplay');
+  queryDisplay.innerHTML = `<span style="color:var(--accent-violet);">SELECT</span> * <span style="color:var(--accent-violet);">FROM</span> <span style="color:var(--accent-emerald);">${table}</span>;`;
+
+  // Render table
+  const data = DB[table];
+  const container = document.getElementById('sqlResultContainer');
+  if (!data || data.length === 0) {
+    container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);">No records found.</div>';
+    return;
+  }
+
+  const cols = Object.keys(data[0]);
+  let html = '<table><thead><tr>';
+  cols.forEach(c => html += `<th>${c}</th>`);
+  html += '</tr></thead><tbody>';
+  data.forEach(row => {
+    html += '<tr>';
+    cols.forEach(c => {
+      let val = row[c];
+      if (typeof val === 'boolean') val = val ? '✅ TRUE' : '❌ FALSE';
+      if (val === null || val === undefined) val = '<span style="color:var(--text-muted);">NULL</span>';
+      html += `<td>${val}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+// ===== AUTH MODAL: Click outside to close =====
+document.getElementById('authModal').addEventListener('click', function(e) {
+  if (e.target === this) closeAuthModal();
+});
+
+// ===== KEYBOARD: Escape closes modal =====
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeAuthModal();
+});
+
+// ===== INITIALIZATION =====
+document.addEventListener('DOMContentLoaded', function() {
+  initTheme();
+  initAuth();
+  generateWorkout();
+  generateMealPlan();
+
+  // Set initial profile from default form values
+  APP_STATE.profile = {
+    age: 28, sex: 'male', height: 178, weight: 82.5,
+    experience: 'intermediate', goal: 'recomposition',
+    duration: 60, days: 4, equipment: 'full_gym', diet: 'high_protein'
+  };
+  updateNutritionCalcs(APP_STATE.profile);
+});
+</script>
+</body>
+</html>
